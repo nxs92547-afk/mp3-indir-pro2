@@ -1,4 +1,4 @@
-name: Android APK Yapici
+name: Android APK Yapici Garantili
 
 on:
   push:
@@ -13,15 +13,18 @@ jobs:
       - name: Kodlari Al
         uses: actions/checkout@v4
 
-      - name: Buildozer ile APK Uret
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: master
+      - name: Gerekli Programlari Kur
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev libgdbm-compat-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev libffi6 autoconf libtool pkg-config zip unzip
+          pip install --upgrade pip
+          pip install buildozer cython virtualenv
 
-      - name: APK'yi Indirmeye Hazirla
+      - name: APK Uret (Lisanslari Otomatik Onayla)
+        run: yes | buildozer android debug
+
+      - name: APK Dosyasini İndirmeye Hazirla
         uses: actions/upload-artifact@v4
         with:
           name: MP3-Indir-Pro-APK
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: bin/*.apk
